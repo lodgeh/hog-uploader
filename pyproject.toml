@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "hog-uploader"
+version = "0.1.0"
+authors = [""]
+description = ""
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+moviepy = "^1.0.3"
+ipykernel = "^6.19.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
