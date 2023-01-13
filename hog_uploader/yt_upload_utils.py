@@ -8,8 +8,8 @@ SCOPES = [
 ]
 
 
-def get_authenticated_service():
-    flow = InstalledAppFlow.from_client_secrets_file("youtube_secrets.json", SCOPES)
+def get_authenticated_service(secret_file_path: str):
+    flow = InstalledAppFlow.from_client_secrets_file(secret_file_path, SCOPES)
     credentials = flow.run_console()
     return build("youtube", "v3", credentials=credentials)
 
