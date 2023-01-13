@@ -22,22 +22,26 @@ PLAYLIST_ID = "PLtZv6jHN_L88JZmqB7yhdxAtm3MEn3CQH"
 
 
 def main():
-    youtube = get_authenticated_service()
-    concatenate_video_clips(INPUT_DIRECTORY)
+    youtube_secret_path = "../youtube_secrets.json"
+    youtube = get_authenticated_service(youtube_secret_path)
+
+    file_dict = get_file_metadata(INPUT_DIRECTORY)
+    unique_dates = get_unique_dates(file_dict)
+    groups = groups_files_into_days(file_dict, unique_dates)
+    concatenate_videos_and_save_to_output(groups)
+
+    for file in INPUT_DIRECTORY:
+        file_path = f"../input/{file}"
+        archive_file_path = f"../archive/raw/{file}"
+        move_file(file_path, archive_file_path)
 
     for file in OUTPUT_DIRECTORY:
         file_name = file.split(".mp4")[0]
         file_path = f"../output/{file}"
+        archive_file_path = f"../archive/concatenated/{file}"
         video_id = upload_youtube_video(youtube, file_name, file_path)
         add_video_to_playlist(youtube, video_id, PLAYLIST_ID)
-        move_file(file)
-
-
-def concatenate_video_clips(input_directory):
-    file_dict = get_file_metadata(input_directory)
-    unique_dates = get_unique_dates(file_dict)
-    groups = groups_files_into_days(file_dict, unique_dates)
-    concatenate_videos_and_save_to_output(groups)
+        move_file(file_path, archive_file_path)
 
 
 def upload_youtube_video(youtube, video_title, file_path):
