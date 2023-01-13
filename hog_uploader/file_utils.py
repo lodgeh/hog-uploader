@@ -49,7 +49,5 @@ def concatenate_videos_and_save_to_output(groups: list):
         final_clip.write_videofile(f"../output/{date.date()}.mp4")
 
 
-def move_file(file_name: str):
-    output_file_path = f"../output/{file_name}"
-    storage_file_path = f"../storage/{file_name}"
-    os.rename(output_file_path, storage_file_path)
+def move_file(current_path: str, new_path: str):
+    os.rename(current_path, new_path)
