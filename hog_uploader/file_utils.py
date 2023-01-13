@@ -41,12 +41,13 @@ def groups_files_into_days(file_dict: dict, unique_dates: list) -> list:
 
 def concatenate_videos_and_save_to_output(groups: list):
     for group in groups:
-        for date, files in group.items():
-            if not files:
-                continue
-            clips: list = [VideoFileClip(f"../input/{file}") for file in files]
-            final_clip = concatenate_videoclips(clips)
-            final_clip.write_videofile(f"../output/{date.date()}.mp4")
+        ((date, files),) = group.items()
+        if not files:
+            continue
+        clips: list = [VideoFileClip(f"../input/{file}") for file in files]
+        final_clip = concatenate_videoclips(clips)
+        final_clip.write_videofile(f"../output/{date.date()}.mp4")
+
 
 def move_file(file_name: str):
     output_file_path = f"../output/{file_name}"
