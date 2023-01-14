@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime, timedelta
 
 from moviepy.editor import VideoFileClip, concatenate_videoclips
@@ -46,8 +47,10 @@ def concatenate_videos_and_save_to_output(groups: list):
             continue
         clips: list = [VideoFileClip(f"../input/{file}") for file in files]
         final_clip = concatenate_videoclips(clips)
+        os.makedirs(os.path.dirname("../output/"), exist_ok=True)
         final_clip.write_videofile(f"../output/{date.date()}.mp4")
 
 
 def move_file(current_path: str, new_path: str):
-    os.rename(current_path, new_path)
+    os.makedirs(os.path.dirname(new_path), exist_ok=True)
+    shutil.move(current_path, new_path)
