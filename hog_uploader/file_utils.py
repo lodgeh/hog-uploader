@@ -54,3 +54,14 @@ def concatenate_videos_and_save_to_output(groups: list):
 def move_file(current_path: str, new_path: str):
     os.makedirs(os.path.dirname(new_path), exist_ok=True)
     shutil.move(current_path, new_path)
+
+
+def move_raw_videoclips_to_archive(groups: list):
+    input_path = os.listdir("../input")
+    for group in groups:
+        ((date, files),) = group.items()
+        if not files:
+            continue
+        for file in files:
+            file_path = os.path.join("../input", file)
+            move_file(file_path, os.path.join(f"../archive/raw/{date.date()}/"))
