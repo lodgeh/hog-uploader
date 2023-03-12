@@ -28,10 +28,6 @@ def group_raw_videoclips_into_days():
     return videoclip_groups
 
 
-def concatenate_videoclips(groups):
-    concatenate_videos_and_save_to_output(groups)
-
-
 def authenticate_for_youtube():
     youtube_secret_path = "../youtube_secrets.json"
     youtube = get_authenticated_service(youtube_secret_path)
@@ -59,9 +55,9 @@ def main():
     authenticate_for_youtube()
 
     videoclips_grouped_by_day = group_raw_videoclips_into_days()
-    move_raw_videoclips_to_archive(videoclips_grouped_by_day)
     concatenate_videos_and_save_to_output(videoclips_grouped_by_day)
-    move_raw_videoclips_to_archive()
+    move_raw_videoclips_to_archive(videoclips_grouped_by_day)
+
     upload_concatenated_videos_to_youtube()
 
 
