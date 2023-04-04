@@ -40,25 +40,25 @@ def upload_youtube_video(youtube, video_title, file_path):
     return video_id
 
 
-def upload_concatenated_videos_to_youtube():
+def upload_concatenated_videos_to_youtube(authenticated_youtube_service):
     output_path = os.listdir("../output")
     archive_concatenated_file_path = f"../archive/concatenated/"
     for file in output_path:
         file_name = file.split(".mp4")[0]
         file_path = f"../output/{file}"
-        video_id = upload_youtube_video(youtube, file_name, file_path)
-        add_video_to_playlist(youtube, PLAYLIST_ID, video_id)
+        video_id = upload_youtube_video(authenticated_youtube_service, file_name, file_path)
+        add_video_to_playlist(authenticated_youtube_service, PLAYLIST_ID, video_id)
         move_file(file_path, archive_concatenated_file_path)
 
 
 def main():
-    authenticate_for_youtube()
+    youtube = authenticate_for_youtube()
 
     videoclips_grouped_by_day = group_raw_videoclips_into_days()
     concatenate_videos_and_save_to_output(videoclips_grouped_by_day)
     move_raw_videoclips_to_archive(videoclips_grouped_by_day)
 
-    upload_concatenated_videos_to_youtube()
+    upload_concatenated_videos_to_youtube(youtube)
 
 
 if __name__ == "__main__":
