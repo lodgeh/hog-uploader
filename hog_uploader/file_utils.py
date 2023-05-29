@@ -34,8 +34,9 @@ def groups_files_into_days(file_dict: dict, unique_dates: list) -> list:
             if start_datetime <= file_date < end_datetime:
                 file_list.append(file)
 
+        sorted_file_list = sorted(file_list)
         daily_file_group: dict = {}
-        daily_file_group[date] = file_list
+        daily_file_group[date] = sorted_file_list
         daily_file_groupings_list.append(daily_file_group)
     return daily_file_groupings_list
 
