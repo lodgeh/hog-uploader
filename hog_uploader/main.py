@@ -42,8 +42,9 @@ def upload_youtube_video(youtube, video_title, file_path):
 
 def upload_concatenated_videos_to_youtube(authenticated_youtube_service):
     output_path = os.listdir("../output")
+    sorted_output_path = sorted(output_path)
     archive_concatenated_file_path = f"../archive/concatenated/"
-    for file in output_path:
+    for file in sorted_output_path:
         file_name = file.split(".mp4")[0]
         file_path = f"../output/{file}"
         video_id = upload_youtube_video(authenticated_youtube_service, file_name, file_path)
