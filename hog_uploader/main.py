@@ -47,7 +47,9 @@ def upload_concatenated_videos_to_youtube(authenticated_youtube_service):
     for file in sorted_output_path:
         file_name = file.split(".mp4")[0]
         file_path = f"../output/{file}"
-        video_id = upload_youtube_video(authenticated_youtube_service, file_name, file_path)
+        video_id = upload_youtube_video(
+            authenticated_youtube_service, file_name, file_path
+        )
         add_video_to_playlist(authenticated_youtube_service, PLAYLIST_ID, video_id)
         move_file(file_path, archive_concatenated_file_path)
 
