@@ -1,5 +1,6 @@
 import os
 import shutil
+import pandas as pd
 from datetime import datetime, timedelta
 
 from moviepy.editor import VideoFileClip, concatenate_videoclips
@@ -18,8 +19,9 @@ def get_file_metadata(directory) -> dict:
 
 def get_unique_dates(file_dict: dict) -> list:
     dates: list = [file_dict[file].date() for file in file_dict]
-    unique_dates: set = set(dates)
-    return [datetime(date.year, date.month, date.day, 0, 0) for date in unique_dates]
+    min_date = min(dates)
+    max_date = max(dates)
+    return pd.date_range(start=min_date, end=max_date)
 
 
 def groups_files_into_days(file_dict: dict, unique_dates: list) -> list:
