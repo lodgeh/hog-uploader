@@ -22,3 +22,6 @@ black = {version = "^23.1a1", allow-prereleases = true}
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+hog = "hog_uploader.hog_uploader:main"

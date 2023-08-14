@@ -1,6 +1,6 @@
 import os
 
-from file_utils import (
+from hog_uploader.file_utils import (
     concatenate_videos_and_save_to_output,
     get_file_metadata,
     get_unique_dates,
@@ -9,7 +9,7 @@ from file_utils import (
     move_raw_videoclips_to_archive,
 )
 
-from yt_upload_utils import (
+from hog_uploader.yt_upload_utils import (
     get_authenticated_service,
     create_video_upload_request,
     start_video_upload,
@@ -29,7 +29,7 @@ def group_raw_videoclips_into_days():
 
 
 def authenticate_for_youtube():
-    youtube_secret_path = "../youtube_secrets.json"
+    youtube_secret_path = "youtube_secrets.json"
     youtube = get_authenticated_service(youtube_secret_path)
     return youtube
 
