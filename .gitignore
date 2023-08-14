@@ -2,6 +2,8 @@ settings.json
 youtube_secrets.json
 __pycache__/
 
+*.mp4
 *.MP4
 *.mp3
+*.ipynb
 
