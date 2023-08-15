@@ -1,15 +1,23 @@
 import os
 import shutil
-import pandas as pd
+import sys
 from datetime import datetime, timedelta
 
+import pandas as pd
 from moviepy.editor import VideoFileClip, concatenate_videoclips
+from pandas import DatetimeIndex, Timestamp
 
 
-def get_file_metadata(directory) -> dict:
+def check_if_any_files(folder: str) -> None:
+    files = os.listdir(folder)
+    if not files:
+        sys.exit(f"There are no video files in the {folder} folder!")
+
+
+def get_file_metadata(files: list) -> dict[str, datetime]:
     file_dict = {}
-    for file in directory:
-        file_creation_unix_time: float = os.path.getmtime(f"../input/{file}")
+    for file in files:
+        file_creation_unix_time: float = os.path.getmtime(f"input/{file}")
         file_creation_datetime: datetime = datetime.fromtimestamp(
             file_creation_unix_time
         )
@@ -17,14 +25,16 @@ def get_file_metadata(directory) -> dict:
     return file_dict
 
 
-def get_unique_dates(file_dict: dict) -> list:
+def get_unique_dates(file_dict: dict) -> DatetimeIndex:
     dates: list = [file_dict[file].date() for file in file_dict]
     min_date = min(dates)
     max_date = max(dates)
     return pd.date_range(start=min_date, end=max_date)
 
 
-def groups_files_into_days(file_dict: dict, unique_dates: list) -> list:
+def groups_files_into_days(
+    file_dict: dict, unique_dates: list
+) -> list[dict[Timestamp, list[str]]]:
     daily_file_groupings_list: list = []
     for date in unique_dates:
         start_datetime: datetime = date + timedelta(hours=12)
@@ -43,28 +53,30 @@ def groups_files_into_days(file_dict: dict, unique_dates: list) -> list:
     return daily_file_groupings_list
 
 
-def concatenate_videos_and_save_to_output(groups: list):
+def concatenate_videos_and_save_to_output(
+    groups: list[dict[Timestamp, list[str]]]
+) -> None:
     for group in groups:
         ((date, files),) = group.items()
         if not files:
             continue
-        clips: list = [VideoFileClip(f"../input/{file}") for file in files]
+        clips: list = [VideoFileClip(f"input/{file}") for file in files]
         final_clip = concatenate_videoclips(clips)
-        os.makedirs(os.path.dirname("../output/"), exist_ok=True)
-        final_clip.write_videofile(f"../output/{date.date()}.mp4")
+        os.makedirs(os.path.dirname("output/"), exist_ok=True)
+        final_clip.write_videofile(f"output/{date.date()}.mp4")
 
 
-def move_file(current_path: str, new_path: str):
+def move_file(current_path: str, new_path: str) -> None:
     os.makedirs(os.path.dirname(new_path), exist_ok=True)
     shutil.move(current_path, new_path)
 
 
-def move_raw_videoclips_to_archive(groups: list):
-    input_path = os.listdir("../input")
+def move_raw_videoclips_to_archive(groups: list) -> None:
+    input_path = os.listdir("input")
     for group in groups:
         ((date, files),) = group.items()
         if not files:
             continue
         for file in files:
-            file_path = os.path.join("../input", file)
-            move_file(file_path, os.path.join(f"../archive/raw/{date.date()}/"))
+            file_path = os.path.join("input", file)
+            move_file(file_path, os.path.join(f"archive/raw/{date.date()}/"))
