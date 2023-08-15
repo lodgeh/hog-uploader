@@ -71,12 +71,12 @@ def main() -> None:
         upload_concatenated_videos_to_youtube(youtube)
 
     if not args.upload_only:
-        # check_if_any_files("input")
-        # youtube = authenticate_for_youtube()
+        check_if_any_files("input")
+        youtube = authenticate_for_youtube()
         videoclips_grouped_by_day = group_raw_videoclips_into_days()
-        # concatenate_videos_and_save_to_output(videoclips_grouped_by_day)
-        # move_raw_videoclips_to_archive(videoclips_grouped_by_day)
-        # upload_concatenated_videos_to_youtube(youtube)
+        concatenate_videos_and_save_to_output(videoclips_grouped_by_day)
+        move_raw_videoclips_to_archive(videoclips_grouped_by_day)
+        upload_concatenated_videos_to_youtube(youtube)
 
 
 if __name__ == "__main__":
