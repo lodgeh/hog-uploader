@@ -31,16 +31,14 @@ def group_raw_videoclips_into_days() -> list:
 
 def authenticate_for_youtube() -> Callable[..., object]:
     youtube_secret_path = "youtube_secrets.json"
-    youtube = get_authenticated_service(youtube_secret_path)
-    return youtube
+    return get_authenticated_service(youtube_secret_path)
 
 
 def upload_youtube_video(
     youtube: Callable[..., object], video_title: str, file_path: str
 ) -> str:
     video_upload_request = create_video_upload_request(youtube, video_title, file_path)
-    video_id = start_video_upload(video_upload_request)
-    return video_id
+    return start_video_upload(video_upload_request)
 
 
 def upload_concatenated_videos_to_youtube(

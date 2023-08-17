@@ -72,7 +72,6 @@ def move_file(current_path: str, new_path: str) -> None:
 
 
 def move_raw_videoclips_to_archive(groups: list) -> None:
-    input_path = os.listdir("input")
     for group in groups:
         ((date, files),) = group.items()
         if not files:
