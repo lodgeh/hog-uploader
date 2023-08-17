@@ -1,7 +1,6 @@
 import argparse
 import os
-
-from googleapiclient.discovery import build
+from typing import Any, Callable
 
 from hog_uploader.file_utils import (
     check_if_any_files,
@@ -30,19 +29,23 @@ def group_raw_videoclips_into_days() -> list:
     return videoclip_groups
 
 
-def authenticate_for_youtube():
+def authenticate_for_youtube() -> Callable[..., object]:
     youtube_secret_path = "youtube_secrets.json"
     youtube = get_authenticated_service(youtube_secret_path)
     return youtube
 
 
-def upload_youtube_video(youtube, video_title: str, file_path: str) -> str:
+def upload_youtube_video(
+    youtube: Callable[..., object], video_title: str, file_path: str
+) -> str:
     video_upload_request = create_video_upload_request(youtube, video_title, file_path)
     video_id = start_video_upload(video_upload_request)
     return video_id
 
 
-def upload_concatenated_videos_to_youtube(authenticated_youtube_service: build) -> None:
+def upload_concatenated_videos_to_youtube(
+    authenticated_youtube_service: Callable[..., object],
+) -> None:
     output_path = os.listdir("output")
     sorted_output_path = sorted(output_path)
     archive_concatenated_file_path = f"archive/concatenated/"
