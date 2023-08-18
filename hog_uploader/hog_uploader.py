@@ -1,6 +1,6 @@
 import argparse
 import os
-from typing import Any, Callable
+from typing import Callable
 
 from hog_uploader.file_utils import (
     check_if_any_files,
@@ -45,7 +45,7 @@ def upload_concatenated_videos_to_youtube(
 ) -> None:
     output_path = os.listdir("output")
     sorted_output_path = sorted(output_path)
-    archive_concatenated_file_path = f"archive/concatenated/"
+    archive_concatenated_file_path = "archive/concatenated/"
     for file in sorted_output_path:
         file_name = file.split(".mp4")[0]
         file_path = f"output/{file}"
