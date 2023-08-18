@@ -25,8 +25,7 @@ def group_raw_videoclips_into_days() -> list:
     input_path = os.listdir("input")
     file_dict = get_file_metadata(input_path)
     unique_dates = get_unique_dates(file_dict)
-    videoclip_groups = groups_files_into_days(file_dict, unique_dates)
-    return videoclip_groups
+    return groups_files_into_days(file_dict, unique_dates)
 
 
 def authenticate_for_youtube() -> Callable[..., object]:

@@ -41,5 +41,4 @@ def add_video_to_playlist(
             resourceId=dict(kind="youtube#video", videoId=video_id),
         )
     )
-
     youtube.playlistItems().insert(part="snippet", body=body).execute()
