@@ -4,7 +4,6 @@ from pytest import MonkeyPatch
 
 from hog_uploader.video import Video
 from hog_uploader.youtube_uploader_service import SCOPES, YoutubeUploaderService
-from datetime import datetime
 
 
 class TestYoutubeUploaderService:
