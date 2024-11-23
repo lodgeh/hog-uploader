@@ -1,8 +1,9 @@
 import os
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+
 from moviepy.editor import VideoFileClip, concatenate_videoclips
-from collections import defaultdict
 
 
 @dataclass

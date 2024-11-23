@@ -1,10 +1,9 @@
 from datetime import datetime
+from unittest.mock import MagicMock, call
 
 from pytest import MonkeyPatch
-from unittest.mock import MagicMock
 
 from hog_uploader.video import Video, VideoLoader, VideoManager
-from collections import defaultdict
 
 
 class TestVideoLoader:
@@ -175,3 +174,85 @@ class TestVideoManager:
             ],
         }
         assert expected == test_video_manager.day_grouped_videos
+
+    def test_concatenate_videos(self, monkeypatch: MonkeyPatch):
+        # given
+        test_video_manager = VideoManager(VideoLoader())
+        test_video_manager.day_grouped_videos = {
+            "2024-05-26": [
+                Video(
+                    "test_file_1.MP4",
+                    "test_path/test_file_1.MP4",
+                    datetime(2024, 5, 26, 12, 0, 0),
+                    "2024-05-26",
+                ),
+                Video(
+                    "test_file_2.MP4",
+                    "test_path/test_file_2.MP4",
+                    datetime(2024, 5, 26, 17, 30, 0),
+                    "2024-05-26",
+                ),
+            ],
+            "2024-05-25": [
+                Video(
+                    "test_file_3.MP4",
+                    "test_path/test_file_3.MP4",
+                    datetime(2024, 5, 26, 3, 0, 0),
+                    "2024-05-26",
+                ),
+                Video(
+                    "test_file_4.MP4",
+                    "test_path/test_file_4.MP4",
+                    datetime(2024, 5, 25, 23, 0, 0),
+                    "2024-05-25",
+                ),
+            ],
+        }
+
+        mock_videoclip = MagicMock()
+        monkeypatch.setattr(
+            "hog_uploader.video.VideoFileClip",
+            lambda path: mock_videoclip,
+        )
+
+        mock_concatenated_videoclip = MagicMock()
+        monkeypatch.setattr(
+            "hog_uploader.video.concatenate_videoclips",
+            lambda clips: mock_concatenated_videoclip,
+        )
+
+        fixed_datetime = datetime(2024, 12, 23, 12, 0, 0, 0)
+        mock_datetime = MagicMock()
+        mock_datetime.now.return_value = fixed_datetime
+
+        monkeypatch.setattr(
+            "hog_uploader.video.datetime",
+            mock_datetime,
+        )
+
+        # when
+        test_video_manager.concatenate_videos()
+
+        # then
+        expected = [
+            Video(
+                "2024-05-26.mp4",
+                "output/2024-05-26.mp4",
+                fixed_datetime,
+                "2024-05-26",
+            ),
+            Video(
+                "2024-05-25.mp4",
+                "output/2024-05-25.mp4",
+                fixed_datetime,
+                "2024-05-25",
+            ),
+        ]
+
+        mock_concatenated_videoclip.assert_has_calls(
+            [
+                call.write_videofile("output/2024-05-26.mp4"),
+                call.write_videofile("output/2024-05-25.mp4"),
+            ]
+        )
+        assert expected == test_video_manager.concatenated_video_list
