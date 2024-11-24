@@ -2,7 +2,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube",
@@ -12,6 +11,7 @@ SCOPES = [
 class YoutubeUploaderService:
     def __init__(self):
         self.youtube_service = None
+        self.video_upload_request = None
 
     def authenticate(self, credentials_file_path: str):
         flow = InstalledAppFlow.from_client_secrets_file(credentials_file_path, SCOPES)
@@ -23,12 +23,12 @@ class YoutubeUploaderService:
             "snippet": {"title": video_title},
             "status": {"privacyStatus": "unlisted"},
         }
-        self.youtube_service.videos().insert(
+        self.video_upload_request = self.youtube_service.videos().insert(
             part=",".join(body.keys()),
             body=body,
             media_body=MediaFileUpload(video_file_path, chunksize=-1, resumable=True),
         )
-        response = self.youtube_service.next_chunk()
+        response = self.video_upload_request.next_chunk()
         return response[1]["id"]
 
     def add_video_to_playlist(self, playlist_id: str, video_id: str):

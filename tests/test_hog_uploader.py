@@ -50,15 +50,13 @@ class TestHogUploader:
             mock_datetime,
         )
 
-        mock_video_manager.concatenated_video_list = [
+        mock_video_manager.get_video_list.return_value = [
             Video(
-                "video_1.mp4",
                 "output/video_1.mp4",
                 fixed_datetime,
                 "2024-05-26",
             ),
             Video(
-                "video_2.mp4",
                 "output/video_2.mp4",
                 fixed_datetime,
                 "2024-05-25",

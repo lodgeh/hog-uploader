@@ -9,7 +9,6 @@ from moviepy.editor import VideoFileClip, concatenate_videoclips
 
 @dataclass
 class Video:
-    file_name: str
     file_path: str
     creation_datetime: datetime
     creation_date_string: str
@@ -17,40 +16,36 @@ class Video:
 
 class VideoLoader:
     def load_videos(self, video_directory_path: str) -> list[Video]:
-        raw_video_list = []
+        video_list = []
         video_files = sorted(os.listdir(video_directory_path))
 
         for file in video_files:
-            if ".MP4" not in file:
+            if ".mp4" not in file.lower():
                 continue
 
-            name = file.split(".MP4")[0]
             path = os.path.join(video_directory_path, file)
 
             file_creation_unix_time = os.path.getmtime(path)
             file_creation_datetime = datetime.fromtimestamp(file_creation_unix_time)
 
-            raw_video_list.append(
+            video_list.append(
                 Video(
-                    name,
                     path,
                     file_creation_datetime,
                     str(file_creation_datetime.date()),
                 )
             )
 
-        return raw_video_list
+        return video_list
 
 
 class VideoManager:
     def __init__(self, video_loader: VideoLoader):
         self.video_loader: VideoLoader = video_loader
-        self.raw_video_list: list[Video] = []
-        self.concatenated_video_list: list[Video] = []
         self.day_grouped_videos: defaultdict[str, list[Video]] = defaultdict(list)
 
-    def get_video_list(self, video_directory_path: str):
-        self.raw_video_list = self.video_loader.load_videos(video_directory_path)
+    def get_video_list(self, video_directory_path: str) -> list[Video]:
+        return self.video_loader.load_videos(video_directory_path)
 
     def group_videos_for_concatenation(self):
         """
@@ -60,7 +55,8 @@ class VideoManager:
         e.g. the date 2024-05-25 would include all videos between
         2024-05-25 12:00:00 and 2024-05-26 11:59:59
         """
-        for video in self.raw_video_list:
+        raw_video_list = self.get_video_list("input/")
+        for video in raw_video_list:
             period_start = video.creation_datetime.replace(
                 hour=12, minute=0, second=0, microsecond=0
             )
@@ -86,15 +82,6 @@ class VideoManager:
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
             day_clip.write_videofile(day_clip_output_path)
-
-            self.concatenated_video_list.append(
-                Video(
-                    day_clip_file_name,
-                    day_clip_output_path,
-                    datetime.now(),
-                    day,
-                )
-            )
 
     def move_video(self, file_path: str, output_path_directory: str):
         os.makedirs(output_path_directory, exist_ok=True)
