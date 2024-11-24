@@ -1,8 +1,10 @@
-from hog_uploader.hog_uploader import HogUploader
-from unittest.mock import MagicMock, call
-from hog_uploader.video import Video
-from pytest import MonkeyPatch
 from datetime import datetime
+from unittest.mock import MagicMock, call
+
+from pytest import MonkeyPatch
+
+from hog_uploader.hog_uploader import HogUploader
+from hog_uploader.video import Video
 
 
 class TestHogUploader:
@@ -79,22 +81,8 @@ class TestHogUploader:
         # then
         mock_youtube_service.upload_video.assert_has_calls(
             [
-                call(
-                    Video(
-                        "video_1.mp4",
-                        "output/video_1.mp4",
-                        fixed_datetime,
-                        "2024-05-26",
-                    )
-                ),
-                call(
-                    Video(
-                        "video_2.mp4",
-                        "output/video_2.mp4",
-                        fixed_datetime,
-                        "2024-05-25",
-                    )
-                ),
+                call("2024-05-26", "output/video_1.mp4"),
+                call("2024-05-25", "output/video_2.mp4"),
             ]
         )
 

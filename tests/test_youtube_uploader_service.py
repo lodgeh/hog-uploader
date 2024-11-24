@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, call
 
 from pytest import MonkeyPatch
 
-from hog_uploader.video import Video
 from hog_uploader.youtube_uploader_service import SCOPES, YoutubeUploaderService
 
 
@@ -42,9 +41,8 @@ class TestYoutubeUploaderService:
     def test_upload_video(self, monkeypatch: MonkeyPatch):
         # given
         test_youtube_service = YoutubeUploaderService()
-        test_video = Video(
-            "some_file.mp4", "some_path/some_file.mp4", None, "2024-11-23"
-        )
+        test_video_title = "2024-11-23"
+        test_video_path = "some_path/some_file.mp4"
 
         mock_youtube_service = MagicMock()
         mock_youtube_service.videos().insert.return_value = mock_youtube_service
@@ -61,13 +59,13 @@ class TestYoutubeUploaderService:
         )
 
         # when
-        video_id = test_youtube_service.upload_video(test_video)
+        video_id = test_youtube_service.upload_video(test_video_title, test_video_path)
 
         # then
         mock_youtube_service.videos().insert.assert_called_once_with(
             part="snippet,status",
             body={
-                "snippet": {"title": test_video.creation_date_string},
+                "snippet": {"title": test_video_title},
                 "status": {"privacyStatus": "unlisted"},
             },
             media_body=mock_media_file_upload,

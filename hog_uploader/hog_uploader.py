@@ -29,7 +29,9 @@ class HogUploader:
     def upload_videos_and_add_to_playlist(self):
         concatenated_video_archive_path = os.path.join("archive", "concatenated")
         for video in self.video_manager.concatenated_video_list:
-            video_id = self.youtube_service.upload_video(video)
+            video_id = self.youtube_service.upload_video(
+                video.creation_date_string, video.file_path
+            )
             self.youtube_service.add_video_to_playlist(self.playlist_id, video_id)
             self.video_manager.move_video(
                 video.file_path, concatenated_video_archive_path
