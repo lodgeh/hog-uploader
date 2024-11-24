@@ -1,4 +1,5 @@
 import os
+import shutil
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -43,10 +44,10 @@ class VideoLoader:
 
 class VideoManager:
     def __init__(self, video_loader: VideoLoader):
-        self.video_loader = video_loader
-        self.raw_video_list = []
-        self.concatenated_video_list = []
-        self.day_grouped_videos = defaultdict(list)
+        self.video_loader: VideoLoader = video_loader
+        self.raw_video_list: list[Video] = []
+        self.concatenated_video_list: list[Video] = []
+        self.day_grouped_videos: defaultdict[str, list[Video]] = defaultdict(list)
 
     def get_video_list(self, video_directory_path: str):
         self.raw_video_list = self.video_loader.load_videos(video_directory_path)
@@ -94,3 +95,11 @@ class VideoManager:
                     day,
                 )
             )
+
+    def move_raw_videos_to_archive(self):
+        for day, videos in self.concatenated_video_list.items():
+            archive_directory = os.path.join("archive", "raw", day)
+            os.makedirs(archive_directory, exist_ok=True)
+
+            for video in videos:
+                shutil.move(video.file_path, archive_directory)

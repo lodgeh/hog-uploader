@@ -256,3 +256,65 @@ class TestVideoManager:
             ]
         )
         assert expected == test_video_manager.concatenated_video_list
+
+    def test_move_raw_videos_to_archive(self, monkeypatch: MonkeyPatch):
+        # given
+        test_video_mananger = VideoManager(VideoLoader())
+        test_video_mananger.concatenated_video_list = {
+            "2024-05-26": [
+                Video(
+                    "test_file_1.MP4",
+                    "test_path/test_file_1.MP4",
+                    datetime(2024, 5, 26, 12, 0, 0),
+                    "2024-05-26",
+                ),
+                Video(
+                    "test_file_2.MP4",
+                    "test_path/test_file_2.MP4",
+                    datetime(2024, 5, 26, 17, 30, 0),
+                    "2024-05-26",
+                ),
+            ],
+            "2024-05-25": [
+                Video(
+                    "test_file_3.MP4",
+                    "test_path/test_file_3.MP4",
+                    datetime(2024, 5, 26, 3, 0, 0),
+                    "2024-05-26",
+                ),
+                Video(
+                    "test_file_4.MP4",
+                    "test_path/test_file_4.MP4",
+                    datetime(2024, 5, 25, 23, 0, 0),
+                    "2024-05-25",
+                ),
+            ],
+        }
+
+        mock_makedirs = MagicMock()
+        monkeypatch.setattr("os.makedirs", mock_makedirs)
+
+        mock_move = MagicMock()
+        monkeypatch.setattr("shutil.move", mock_move)
+
+        # when
+        test_video_mananger.move_raw_videos_to_archive()
+
+        # then
+        mock_makedirs.assert_has_calls(
+            [
+                call("archive/raw/2024-05-26", exist_ok=True),
+                call("archive/raw/2024-05-25", exist_ok=True),
+            ]
+        )
+        assert mock_makedirs.call_count == 2
+
+        mock_move.assert_has_calls(
+            [
+                call("test_path/test_file_1.MP4", "archive/raw/2024-05-26"),
+                call("test_path/test_file_2.MP4", "archive/raw/2024-05-26"),
+                call("test_path/test_file_3.MP4", "archive/raw/2024-05-25"),
+                call("test_path/test_file_4.MP4", "archive/raw/2024-05-25"),
+            ]
+        )
+        assert mock_move.call_count == 4
