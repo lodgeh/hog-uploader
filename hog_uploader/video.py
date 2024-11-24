@@ -101,7 +101,7 @@ class VideoManager:
         shutil.move(file_path, output_path_directory)
 
     def move_raw_videos_to_archive(self):
-        for day, videos in self.concatenated_video_list.items():
+        for day, videos in self.day_grouped_videos.items():
             archive_directory = os.path.join("archive", "raw", day)
 
             for video in videos:

@@ -283,7 +283,7 @@ class TestVideoManager:
     def test_move_raw_videos_to_archive(self, monkeypatch: MonkeyPatch):
         # given
         test_video_mananger = VideoManager(VideoLoader())
-        test_video_mananger.concatenated_video_list = {
+        test_video_mananger.day_grouped_videos = {
             "2024-05-26": [
                 Video(
                     "test_file_1.MP4",
