@@ -26,4 +26,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-hog = "hog_uploader.hog_uploader:main"
+hog = "hog_uploader.main:main"
