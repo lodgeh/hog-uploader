@@ -96,10 +96,13 @@ class VideoManager:
                 )
             )
 
+    def move_video(self, file_path: str, output_path_directory: str):
+        os.makedirs(output_path_directory, exist_ok=True)
+        shutil.move(file_path, output_path_directory)
+
     def move_raw_videos_to_archive(self):
         for day, videos in self.concatenated_video_list.items():
             archive_directory = os.path.join("archive", "raw", day)
-            os.makedirs(archive_directory, exist_ok=True)
 
             for video in videos:
-                shutil.move(video.file_path, archive_directory)
+                self.move_video(video.file_path, archive_directory)

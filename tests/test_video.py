@@ -257,6 +257,28 @@ class TestVideoManager:
         )
         assert expected == test_video_manager.concatenated_video_list
 
+    def test_move_video(self, monkeypatch: MonkeyPatch):
+        # given
+        test_video_manager = VideoManager(VideoLoader())
+        file_path = "test/file.mp4"
+        output_directory_path = "test/output/"
+
+        mock_makedirs = MagicMock()
+        monkeypatch.setattr("os.makedirs", mock_makedirs)
+
+        mock_move = MagicMock()
+        monkeypatch.setattr("shutil.move", mock_move)
+
+        # when
+        test_video_manager.move_video(file_path, output_directory_path)
+
+        # then
+        mock_makedirs.assert_has_calls([call(output_directory_path, exist_ok=True)])
+        assert mock_makedirs.call_count == 1
+
+        mock_move.assert_has_calls([call(file_path, output_directory_path)])
+        assert mock_move.call_count == 1
+
     def test_move_raw_videos_to_archive(self, monkeypatch: MonkeyPatch):
         # given
         test_video_mananger = VideoManager(VideoLoader())
@@ -307,7 +329,7 @@ class TestVideoManager:
                 call("archive/raw/2024-05-25", exist_ok=True),
             ]
         )
-        assert mock_makedirs.call_count == 2
+        assert mock_makedirs.call_count == 4
 
         mock_move.assert_has_calls(
             [
