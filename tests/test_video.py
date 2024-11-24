@@ -114,6 +114,18 @@ class TestVideoManager:
         test_video_manager = VideoManager(VideoLoader())
         test_video_manager.raw_video_list = [
             Video(
+                "test_file_4.MP4",
+                "test_path/test_file_4.MP4",
+                datetime(2024, 5, 25, 23, 0, 0),
+                "2024-05-25",
+            ),
+            Video(
+                "test_file_3.MP4",
+                "test_path/test_file_3.MP4",
+                datetime(2024, 5, 26, 3, 0, 0),
+                "2024-05-26",
+            ),
+            Video(
                 "test_file_1.MP4",
                 "test_path/test_file_1.MP4",
                 datetime(2024, 5, 26, 12, 0, 0),
@@ -125,24 +137,13 @@ class TestVideoManager:
                 datetime(2024, 5, 26, 17, 30, 0),
                 "2024-05-26",
             ),
-            Video(
-                "test_file_3.MP4",
-                "test_path/test_file_3.MP4",
-                datetime(2024, 5, 26, 3, 0, 0),
-                "2024-05-26",
-            ),
-            Video(
-                "test_file_4.MP4",
-                "test_path/test_file_4.MP4",
-                datetime(2024, 5, 25, 23, 0, 0),
-                "2024-05-25",
-            ),
         ]
 
         # when
         test_video_manager.group_videos_for_concatenation()
 
         # then
+        # video's should be in ascending order within each day
         expected = {
             "2024-05-26": [
                 Video(
@@ -160,16 +161,16 @@ class TestVideoManager:
             ],
             "2024-05-25": [
                 Video(
-                    "test_file_3.MP4",
-                    "test_path/test_file_3.MP4",
-                    datetime(2024, 5, 26, 3, 0, 0),
-                    "2024-05-26",
-                ),
-                Video(
                     "test_file_4.MP4",
                     "test_path/test_file_4.MP4",
                     datetime(2024, 5, 25, 23, 0, 0),
                     "2024-05-25",
+                ),
+                Video(
+                    "test_file_3.MP4",
+                    "test_path/test_file_3.MP4",
+                    datetime(2024, 5, 26, 3, 0, 0),
+                    "2024-05-26",
                 ),
             ],
         }
