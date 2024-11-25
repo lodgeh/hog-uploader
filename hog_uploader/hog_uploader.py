@@ -21,8 +21,7 @@ class HogUploader:
         self.youtube_service.authenticate(credentials_file_path)
 
     def get_videos(self):
-        self.video_manager.get_video_list(self.video_directory_path)
-        self.video_manager.group_videos_for_concatenation()
+        self.video_manager.group_videos_for_concatenation(self.video_directory_path)
         self.video_manager.concatenate_videos()
         self.video_manager.move_raw_videos_to_archive()
 
@@ -30,9 +29,7 @@ class HogUploader:
         concatenated_video_archive_path = os.path.join("archive", "concatenated")
         video_list = self.video_manager.get_video_list("output/")
         for video in video_list:
-            video_id = self.youtube_service.upload_video(
-                video.creation_date_string, video.file_path
-            )
+            video_id = self.youtube_service.upload_video(video.name, video.file_path)
             self.youtube_service.add_video_to_playlist(self.playlist_id, video_id)
             self.video_manager.move_video(
                 video.file_path, concatenated_video_archive_path

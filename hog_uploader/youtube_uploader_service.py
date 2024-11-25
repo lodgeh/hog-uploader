@@ -17,6 +17,7 @@ class YoutubeUploaderService:
         flow = InstalledAppFlow.from_client_secrets_file(credentials_file_path, SCOPES)
         credentials = flow.run_console()
         self.youtube_service = build("youtube", "v3", credentials=credentials)
+        print("authenticated successfully")
 
     def upload_video(self, video_title: str, video_file_path: str) -> str:
         body = {
@@ -28,8 +29,11 @@ class YoutubeUploaderService:
             body=body,
             media_body=MediaFileUpload(video_file_path, chunksize=-1, resumable=True),
         )
+        print(f"upload started for {video_file_path} with title {video_title} ")
         response = self.video_upload_request.next_chunk()
-        return response[1]["id"]
+        video_id = response[1]["id"]
+        print(f"{video_title} uploaded complete with the video id: {video_id}")
+        return video_id
 
     def add_video_to_playlist(self, playlist_id: str, video_id: str):
         body = {
@@ -39,3 +43,4 @@ class YoutubeUploaderService:
             },
         }
         self.youtube_service.playlistItems().insert(part="snippet", body=body).execute()
+        print(f"video id: {video_id} has been added to playlist: {playlist_id}")

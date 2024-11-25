@@ -28,8 +28,9 @@ class TestHogUploader:
         test_hog_uploader.get_videos()
 
         # then
-        mock_video_manager.get_video_list.assert_called_once_with(input_video_path)
-        mock_video_manager.group_videos_for_concatenation.assert_called_once()
+        mock_video_manager.group_videos_for_concatenation.assert_called_once_with(
+            input_video_path
+        )
         mock_video_manager.concatenate_videos.assert_called_once()
         mock_video_manager.move_raw_videos_to_archive.assert_called_once()
 
@@ -52,11 +53,13 @@ class TestHogUploader:
 
         mock_video_manager.get_video_list.return_value = [
             Video(
+                "video_1",
                 "output/video_1.mp4",
                 fixed_datetime,
                 "2024-05-26",
             ),
             Video(
+                "video_2",
                 "output/video_2.mp4",
                 fixed_datetime,
                 "2024-05-25",
@@ -79,8 +82,8 @@ class TestHogUploader:
         # then
         mock_youtube_service.upload_video.assert_has_calls(
             [
-                call("2024-05-26", "output/video_1.mp4"),
-                call("2024-05-25", "output/video_2.mp4"),
+                call("video_1", "output/video_1.mp4"),
+                call("video_2", "output/video_2.mp4"),
             ]
         )
 
