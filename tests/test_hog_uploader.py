@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, call
 from pytest import MonkeyPatch
 
 from hog_uploader.hog_uploader import HogUploader
-from hog_uploader.video import Video
+from hog_uploader.video_manager import Video
 
 
 class TestHogUploader:
@@ -47,7 +47,7 @@ class TestHogUploader:
         mock_datetime.now.return_value = fixed_datetime
 
         monkeypatch.setattr(
-            "hog_uploader.video.datetime",
+            "hog_uploader.video_manager.datetime",
             mock_datetime,
         )
 

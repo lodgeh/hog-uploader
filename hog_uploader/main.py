@@ -1,7 +1,7 @@
 import argparse
 
 from hog_uploader.hog_uploader import HogUploader
-from hog_uploader.video import VideoLoader, VideoManager
+from hog_uploader.video_manager import VideoLoader, VideoManager
 from hog_uploader.youtube_uploader_service import YoutubeUploaderService
 
 PLAYLIST_ID = "PLtZv6jHN_L88JZmqB7yhdxAtm3MEn3CQH"

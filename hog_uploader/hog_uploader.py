@@ -1,6 +1,6 @@
 import os
 
-from hog_uploader.video import VideoManager
+from hog_uploader.video_manager import VideoManager
 from hog_uploader.youtube_uploader_service import YoutubeUploaderService
 
 
