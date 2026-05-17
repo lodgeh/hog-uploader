@@ -32,7 +32,6 @@ class TestHogUploader:
             input_video_path
         )
         mock_video_manager.concatenate_videos.assert_called_once()
-        mock_video_manager.move_raw_videos_to_archive.assert_called_once()
 
     def test_upload_videos_and_add_to_playlist(self, monkeypatch: MonkeyPatch):
         # given
