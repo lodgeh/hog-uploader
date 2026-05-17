@@ -148,6 +148,12 @@ class TestVideoManager:
             mock_datetime,
         )
 
+        mock_makedirs = MagicMock()
+        monkeypatch.setattr("os.makedirs", mock_makedirs)
+
+        mock_move = MagicMock()
+        monkeypatch.setattr("shutil.move", mock_move)
+
         # when
         video_manager_mock.concatenate_videos()
 
@@ -176,27 +182,26 @@ class TestVideoManager:
         mock_move = MagicMock()
         monkeypatch.setattr("shutil.move", mock_move)
 
+        input_day = "2024-05-26"
+
         # when
-        video_manager_mock.move_raw_videos_to_archive()
+        video_manager_mock.move_raw_videos_to_archive(input_day)
 
         # then
         mock_makedirs.assert_has_calls(
             [
                 call("archive/raw/2024-05-26", exist_ok=True),
-                call("archive/raw/2024-05-25", exist_ok=True),
             ]
         )
-        assert mock_makedirs.call_count == 4
+        assert mock_makedirs.call_count == 2
 
         mock_move.assert_has_calls(
             [
                 call("test_path/test_file_1.MP4", "archive/raw/2024-05-26"),
                 call("test_path/test_file_2.MP4", "archive/raw/2024-05-26"),
-                call("test_path/test_file_3.MP4", "archive/raw/2024-05-25"),
-                call("test_path/test_file_4.MP4", "archive/raw/2024-05-25"),
             ]
         )
-        assert mock_move.call_count == 4
+        assert mock_move.call_count == 2
 
     def test_move_video(self, monkeypatch: MonkeyPatch):
         # given

@@ -93,14 +93,15 @@ class VideoManager:
 
             day_clip.write_videofile(day_clip_output_path)
 
+            self.move_raw_videos_to_archive(day)
+
     def move_video(self, file_path: str, output_path_directory: str):
         os.makedirs(output_path_directory, exist_ok=True)
         shutil.move(file_path, output_path_directory)
         print(f"{file_path} has been moved to {output_path_directory}")
 
-    def move_raw_videos_to_archive(self):
-        for day, videos in self.day_grouped_videos.items():
-            archive_directory = os.path.join("archive", "raw", day)
-
-            for video in videos:
-                self.move_video(video.file_path, archive_directory)
+    def move_raw_videos_to_archive(self, day: str):
+        videos = self.day_grouped_videos[day]
+        archive_directory = os.path.join("archive", "raw", day)
+        for video in videos:
+            self.move_video(video.file_path, archive_directory)

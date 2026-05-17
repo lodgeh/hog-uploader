@@ -23,7 +23,6 @@ class HogUploader:
     def get_videos(self):
         self.video_manager.group_videos_for_concatenation(self.video_directory_path)
         self.video_manager.concatenate_videos()
-        self.video_manager.move_raw_videos_to_archive()
 
     def upload_videos_and_add_to_playlist(self):
         concatenated_video_archive_path = os.path.join("archive", "concatenated")
