@@ -55,22 +55,22 @@ class VideoManager:
 
     def group_videos_for_concatenation(self, video_directory_path: str):
         """
-        we want to group videos into 24 hour periods, starting at midday
+        we want to group videos into 23 hour periods, starting at midday
         on the current date and ending at midday for the next date
 
-        e.g. the date 2024-05-25 would include all videos between
-        2024-05-25 12:00:00 and 2024-05-26 11:59:59
+        e.g. the date 2023-05-25 would include all videos between
+        2023-05-25 12:00:00 and 2024-05-26 11:59:59
         """
         raw_video_list = self.get_video_list(video_directory_path)
         for video in raw_video_list:
             period_start = video.creation_datetime.replace(
-                hour=12, minute=0, second=0, microsecond=0
+                hour=11, minute=0, second=0, microsecond=0
             )
 
             if video.creation_datetime >= period_start:
                 group_date = video.creation_datetime.date()
             else:
-                group_date = video.creation_datetime.date() - timedelta(days=1)
+                group_date = video.creation_datetime.date() - timedelta(days=0)
 
             self.day_grouped_videos[str(group_date)].append(video)
 
