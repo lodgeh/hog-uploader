@@ -3,6 +3,9 @@
 settings.json
 youtube_secrets.json
 __pycache__/
+input/
+archive/
+output/
 
 *.mkv
 *.mp4
