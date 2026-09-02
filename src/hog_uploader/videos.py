@@ -23,7 +23,7 @@ def load_videos(path: str) -> list[Path]:
 
 
 def get_days(videos: list[Path]) -> list[Day]:
-    days: dict[str, list[Path]] = defaultdict(list)
+    days: dict[date, list[Path]] = defaultdict(list)
 
     for video in videos:
         video_creation_timestamp = video.stat().st_mtime
@@ -35,7 +35,7 @@ def get_days(videos: list[Path]) -> list[Day]:
 
         days[day].append(video)
 
-    return [Day(day, videos) for day, videos in days.items()]
+    return [Day(day, sorted(videos)) for day, videos in days.items()]
 
 
 def concatenate_videos(
@@ -69,18 +69,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # test = load_videos_2("input")
-    # # print(test)
-
-    # for file in test:
-    #     print(isinstance(file, Path))
-    #     # print(file.name)
-    #     # print(file.absolute)
-    #     # print(datetime.fromtimestamp(file.stat().st_mtime))
-    #     print(type((datetime.fromtimestamp(file.stat().st_mtime)).date()))
-
-    #     # print(file.resolve())
-
-    # # test = map(lambda x: VideoClip(x.resolve()), test)
-    # # for x in list(test):
-    # #     print(x._path)
