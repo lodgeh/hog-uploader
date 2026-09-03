@@ -2,6 +2,7 @@
 
 settings.json
 youtube_secrets.json
+client_secret_*.json
 __pycache__/
 input/
 archive/
