@@ -1,5 +1,7 @@
+from pathlib import Path
+
 from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build, Resource
+from googleapiclient.discovery import Resource, build
 from googleapiclient.http import MediaFileUpload
 
 SCOPES = [
@@ -20,7 +22,7 @@ class YoutubeVideoUploader:
     def __init__(self, service: Resource):
         self.youtube = service
 
-    def upload_video(self, video_title: str, video_file_path: str) -> str:
+    def upload_video(self, video_title: str, video_file_path: Path) -> str:
         body = {
             "snippet": {"title": video_title},
             "status": {"privacyStatus": "unlisted"},
@@ -28,7 +30,9 @@ class YoutubeVideoUploader:
         video_upload_request = self.youtube.videos().insert(
             part=",".join(body.keys()),
             body=body,
-            media_body=MediaFileUpload(video_file_path, chunksize=-1, resumable=True),
+            media_body=MediaFileUpload(
+                str(video_file_path), chunksize=-1, resumable=True
+            ),
         )
         response = None
         while response is None:

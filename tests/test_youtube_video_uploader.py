@@ -38,10 +38,10 @@ def test_create_youtube_service(monkeypatch: MonkeyPatch):
 
 
 class TestYoutubeVideoUploader:
-    def test_upload_video(self, monkeypatch: MonkeyPatch):
+    def test_upload_video(self, monkeypatch: MonkeyPatch, tmp_path):
         # given
         test_video_title = "2024-11-23"
-        test_video_path = "some_path/some_file.mp4"
+        test_video_path = tmp_path / "some_path/some_file.mp4"
 
         test_service = MagicMock()
         test_service.videos().insert.return_value = test_service
