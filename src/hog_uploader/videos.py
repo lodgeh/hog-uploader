@@ -18,7 +18,7 @@ class Day:
 
 
 def load_videos(path: Path) -> list[Path]:
-    return [file for file in path.iterdir() if file.suffix == ".mkv"]
+    return sorted(file for file in path.iterdir() if file.suffix == ".mkv")
 
 
 def get_days(videos: list[Path]) -> list[Day]:

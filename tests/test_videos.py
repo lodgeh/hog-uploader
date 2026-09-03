@@ -1,9 +1,15 @@
 from datetime import date, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import MagicMock, call, patch
 
-from hog_uploader.videos import Day, get_days, concatenate_videos, move_file
+from hog_uploader.videos import (
+    Day,
+    concatenate_videos,
+    get_days,
+    load_videos,
+    move_file,
+)
 
 
 def test_Day():
@@ -14,6 +20,26 @@ def test_Day():
 
     assert isinstance(actual_day.date_string, str)
     assert actual_day.date_string == "2026-08-23"
+
+
+def test_load_videos(tmp_path):
+    # given
+    test_path = tmp_path / "something"
+    test_file_1 = test_path / "video1.mkv"
+    test_file_2 = test_path / "video2.mkv"
+    test_file_3 = test_path / "notavideo.csv"
+
+    test_path.mkdir()
+    test_file_1.touch()
+    test_file_2.touch()
+    test_file_3.touch()
+
+    # when
+    actual = load_videos(test_path)
+
+    # then
+    expected = [test_file_1, test_file_2]
+    assert actual == expected
 
 
 @patch.object(
