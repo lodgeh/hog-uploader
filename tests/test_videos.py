@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 
 from hog_uploader.videos import Day, get_days, concatenate_videos, move_file
 
@@ -42,38 +42,48 @@ def test_get_days(mock_stats, tmp_path):
     assert actual == expected
 
 
-@patch("hog_uploader.videos.move_file")
 @patch("hog_uploader.videos.concatenate_videoclips")
 @patch("hog_uploader.videos.VideoFileClip")
 def test_concatenate_videos(
-    mock_video_file_clip, mock_concatenate_videoclips, mock_move_files, tmp_path
+    mock_video_file_clip, mock_concatenate_videoclips, tmp_path
 ):
+    # given
     video_1 = tmp_path / "video1.mp4"
     video_2 = tmp_path / "video2.mp4"
     video_3 = tmp_path / "video3.mp4"
-
-    test_archive_directory = tmp_path / "archive"
     test_output_directory = tmp_path / "output"
+    test_day = Day(
+        date=datetime(2026, 8, 23).date(), videos=[video_1, video_2, video_3]
+    )
 
-    test_days = [
-        Day(
-            date=datetime(2026, 8, 23).date(),
-            videos=[video_1, video_2],
-        ),
-        Day(date=datetime(2026, 8, 24).date(), videos=[video_3]),
+    mock_final_videoclip = MagicMock()
+    mock_concatenate_videoclips.return_value = mock_final_videoclip
+    mock_final_videoclip.__enter__.return_value = mock_final_videoclip
+
+    mock_videoclip_1 = MagicMock()
+    mock_videoclip_2 = MagicMock()
+    mock_videoclip_3 = MagicMock()
+    mock_video_file_clip.side_effect = [
+        mock_videoclip_1,
+        mock_videoclip_2,
+        mock_videoclip_3,
     ]
 
-    concatenate_videos(test_days, test_archive_directory, test_output_directory)
+    # when
+    actual = concatenate_videos(test_day, test_output_directory)
+
+    # then
+    expected = tmp_path / "output" / "2026-08-23.mkv"
+    assert actual == expected
 
     mock_video_file_clip.assert_has_calls([call(video_1), call(video_2), call(video_3)])
-    mock_concatenate_videoclips.call_count == 2
-    mock_move_files.assert_has_calls(
-        [
-            call(video_1, test_archive_directory / "2026-08-23"),
-            call(video_2, test_archive_directory / "2026-08-23"),
-            call(video_3, test_archive_directory / "2026-08-24"),
-        ]
-    )
+    mock_videoclip_1.close.assert_called_once()
+    mock_videoclip_2.close.assert_called_once()
+    mock_videoclip_3.close.assert_called_once()
+
+    mock_final_videoclip.__enter__.assert_called_once()
+    mock_final_videoclip.write_videofile.assert_called_once_with(expected, threads=12)
+    mock_final_videoclip.__exit__.assert_called_once()
 
 
 @patch("hog_uploader.videos.shutil.move")

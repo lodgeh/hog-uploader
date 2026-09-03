@@ -17,9 +17,8 @@ class Day:
         return self.date.isoformat()
 
 
-def load_videos(path: str) -> list[Path]:
-    p = Path(path)
-    return [file for file in p.iterdir() if file.suffix == ".mkv"]
+def load_videos(path: Path) -> list[Path]:
+    return [file for file in path.iterdir() if file.suffix == ".mkv"]
 
 
 def get_days(videos: list[Path]) -> list[Day]:
@@ -38,34 +37,21 @@ def get_days(videos: list[Path]) -> list[Day]:
     return [Day(day, sorted(videos)) for day, videos in days.items()]
 
 
-def concatenate_videos(
-    days: list[Day], archive_directory: Path, output_directory: Path
-) -> None:
-    output_directory.mkdir(parents=True, exist_ok=True)
-    for day in days:
-        videoclips = [VideoFileClip(video) for video in day.videos]
-        final = concatenate_videoclips(videoclips)
-        final.write_videofile(output_directory / f"{day.date_string}.mkv", threads=12)
+def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
+    output_path = concatenated_videos_directory / f"{day.date_string}.mkv"
 
-        for video in day.videos:
-            move_file(video, archive_directory / day.date_string)
+    videoclips = [VideoFileClip(video) for video in day.videos]
+
+    try:
+        with concatenate_videoclips(videoclips) as final:
+            final.write_videofile(output_path, threads=12)
+    finally:
+        for clip in videoclips:
+            clip.close()
+
+    return output_path
 
 
 def move_file(file_path: Path, destination: Path) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     shutil.move(file_path, destination)
-
-
-def main():
-    path = "/home/hi/hog-uploader/input"
-    videos = load_videos(path)
-    days = get_days(videos)
-
-    archive_path = Path("archive")
-    output_path = Path("output")
-
-    concatenate_videos(days, archive_path, output_path)
-
-
-if __name__ == "__main__":
-    main()
