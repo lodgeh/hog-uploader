@@ -20,6 +20,7 @@ def test_Day():
 
     assert isinstance(actual_day.date_string, str)
     assert actual_day.date_string == "2026-08-23"
+    assert actual_day.concatenated_video is None
 
 
 def test_load_videos(tmp_path):

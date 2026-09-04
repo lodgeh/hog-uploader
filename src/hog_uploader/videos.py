@@ -11,6 +11,7 @@ from moviepy import VideoFileClip, concatenate_videoclips
 class Day:
     date: date
     videos: list[Path]
+    concatenated_video: Path | None = None
 
     @property
     def date_string(self) -> str:
