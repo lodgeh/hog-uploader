@@ -38,7 +38,7 @@ class YoutubeVideoUploader:
         response = None
         while response is None:
             _, response = video_upload_request.next_chunk()
-        return response[1]["id"]
+        return response["id"]
 
     def add_video_to_playlist(self, playlist_id: str, video_id: str) -> None:
         body = {

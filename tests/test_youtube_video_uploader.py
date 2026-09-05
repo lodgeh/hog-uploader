@@ -47,10 +47,7 @@ class TestYoutubeVideoUploader:
         test_service.videos().insert.return_value = test_service
         test_service.next_chunk.return_value = (
             None,
-            [
-                "some_other_value",
-                {"id": "video_id_123"},
-            ],
+            {"id": "video_id_123"},
         )
 
         mock_media_file_upload = MagicMock()
