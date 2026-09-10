@@ -35,9 +35,7 @@ class YoutubeVideoUploader:
                 str(video_file_path), chunksize=-1, resumable=True
             ),
         )
-        response = None
-        while response is None:
-            _, response = video_upload_request.next_chunk()
+        _, response = video_upload_request.next_chunk()
         return response["id"]
 
     def add_video_to_playlist(self, playlist_id: str, video_id: str) -> None:
@@ -51,7 +49,7 @@ class YoutubeVideoUploader:
 
     def upload_video_and_add_to_playlist(
         self, video_title: str, video_file_path: Path, playlist_id: str
-    ):
+    ) -> None:
         video_id = self.upload_video(
             video_title=video_title, video_file_path=video_file_path
         )
