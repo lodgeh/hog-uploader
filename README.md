@@ -6,24 +6,43 @@ project for combining video clips into continuous files and uploading to youtube
 
 ## Usage
 
-* Setup OAuth 2.0 Desktop Client in Google Cloud Platform
-* Download OAuth Client JSON file and rename to `youtube_secrets.json`
-* Move `youtube_secrets.json` to the root of this directory
-* Add your video files into a folder called `input` in the root of this directory
+* Setup OAuth 2.0 Desktop Client in Google Cloud Platform (GCP):
+    * In GCP navigate to the Credentials page
+    * Create credentials
+    * OAuth client ID
+    * Desktop app application type
+* Download OAuth Client JSON file
+
+
 * Run the following commands:
 
     ```
-    poetry install
-    poetry run hog [--upload-only]
+    uv sync
+    uv run hog --input-dir input --output-dir output --upload --oauth-client-secrets-file client_secret_135093931493-kfb6t1nl7ir9063lelmcl1kkdsb3sne4.apps.googleusercontent.com.json --youtube-playlist-id PLtZv6jHN_L88JZmqB7yhdxAtm3MEn3CQH
     ```
-    ```
-    Options:
-        --upload-only           Only uploads files in output folder to the YouTube playlist
-    ```
+    
+## Help
+```
+usage: hog [-h] [--input-dir INPUT_DIR] [--output-dir OUTPUT_DIR] [--upload | --no-upload]
+           [--oauth-client-secrets-file OAUTH_CLIENT_SECRETS_FILE] [--youtube-playlist-id YOUTUBE_PLAYLIST_ID]
+
+options:
+  -h, --help            show this help message and exit
+  --input-dir INPUT_DIR
+                        Directory containing input video files
+  --output-dir OUTPUT_DIR
+                        Output directory for raw, concatenated and uploaded videos
+  --upload, --no-upload
+                        Upload concatenated videos to YouTube; defaults to --upload
+  --oauth-client-secrets-file OAUTH_CLIENT_SECRETS_FILE
+                        Path of the JSON file that contains the OAuth client secrets; required with --upload
+  --youtube-playlist-id YOUTUBE_PLAYLIST_ID
+                        YouTube playlist ID to add uploaded videos to; required with --upload 
+```
 
 
 ## Tests
 
 ```
-poetry run pytest
+uv run pytest
 ```
