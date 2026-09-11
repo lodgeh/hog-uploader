@@ -39,6 +39,7 @@ def get_days(videos: list[Path]) -> list[Day]:
 
 
 def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
+    concatenated_videos_directory.mkdir(parents=True, exist_ok=True)
     output_path = concatenated_videos_directory / f"{day.date_string}.mkv"
 
     videoclips = [VideoFileClip(video) for video in day.videos]
