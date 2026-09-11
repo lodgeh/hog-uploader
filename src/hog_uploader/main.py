@@ -1,48 +1,92 @@
 import argparse
+from collections.abc import Sequence
 from pathlib import Path
 
 from hog_uploader.videos import concatenate_videos, get_days, load_videos, move_file
 from hog_uploader.youtube_video_uploader import (
-    PLAYLIST_ID,
     YoutubeVideoUploader,
     create_youtube_service,
 )
 
 
-def hog_uploader():
+def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--upload", action=argparse.BooleanOptionalAction)
-    parser.add_argument("--input-dir", type=Path)
-    parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--oauth-client-secrets-file", type=Path)
-    parser.add_argument("--youtube-playlist-id", type=str, default=PLAYLIST_ID)
-    args = parser.parse_args()
+    parser.add_argument(
+        "--input-dir", type=Path, help="Directory containing input video files"
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Output directory for raw, concatenated and uploaded videos",
+    )
+    parser.add_argument(
+        "--upload",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Upload concatenated videos to YouTube; defaults to --upload",
+    )
+    parser.add_argument(
+        "--oauth-client-secrets-file",
+        type=Path,
+        help=(
+            "Path of the JSON file that contains the OAuth client secrets; "
+            "required with --upload"
+        ),
+    )
+    parser.add_argument(
+        "--youtube-playlist-id",
+        type=str,
+        help=("YouTube playlist ID to add uploaded videos to; required with --upload"),
+    )
+    args = parser.parse_args(argv)
 
-    input_dir = args.input_dir
-    raw_dir = args.output_dir / "raw"
-    concatenated_dir = args.output_dir / "concatenated"
-    uploaded_dir = args.output_dir / "uploaded"
+    if args.upload and (
+        args.oauth_client_secrets_file is None or args.youtube_playlist_id is None
+    ):
+        parser.error(
+            "--oauth-client-secrets-file and --youtube-playlist-id are required with --upload"
+        )
 
-    if args.upload:
-        youtube = create_youtube_service(args.oauth_client_secrets_file)
+    hog_uploader(
+        input_directory=args.input_dir,
+        output_directory=args.output_dir,
+        upload=args.upload,
+        oauth_client_secrets_file=args.oauth_client_secrets_file,
+        youtube_playlist_id=args.youtube_playlist_id,
+    )
+
+
+def hog_uploader(
+    input_directory: Path,
+    output_directory: Path,
+    upload: bool,
+    oauth_client_secrets_file: Path,
+    youtube_playlist_id: str,
+) -> None:
+    raw_directory = output_directory / "raw"
+    concatenated_directory = output_directory / "concatenated"
+    uploaded_directory = output_directory / "uploaded"
+
+    if upload:
+        youtube = create_youtube_service(oauth_client_secrets_file)
         youtube_uploader = YoutubeVideoUploader(youtube)
 
-    videos = load_videos(input_dir)
+    videos = load_videos(input_directory)
     days = get_days(videos)
 
     for day in days:
-        day.concatenated_video = concatenate_videos(day, concatenated_dir)
+        day.concatenated_video = concatenate_videos(day, concatenated_directory)
 
         for video in day.videos:
-            move_file(video, raw_dir)
+            move_file(video, raw_directory)
 
-    if args.upload:
+    if upload:
         for day in days:
             youtube_uploader.upload_video_and_add_to_playlist(
-                day.date_string, day.concatenated_video, args.youtube_playlist_id
+                day.date_string, day.concatenated_video, youtube_playlist_id
             )
-            move_file(day.concatenated_video, uploaded_dir)
+            move_file(day.concatenated_video, uploaded_directory)
 
 
 if __name__ == "__main__":
-    hog_uploader()
+    main()
