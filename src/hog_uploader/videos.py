@@ -1,6 +1,6 @@
 import shutil
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -10,7 +10,7 @@ from moviepy import VideoFileClip, concatenate_videoclips
 @dataclass
 class Day:
     date: date
-    videos: list[Path]
+    source_videos: list[Path] = field(default_factory=list)
     concatenated_video: Path | None = None
 
     @property
@@ -35,18 +35,26 @@ def get_days(videos: list[Path]) -> list[Day]:
 
         days[day].append(video)
 
-    return [Day(day, sorted(videos)) for day, videos in days.items()]
+    return [Day(date=day, source_videos=sorted(videos)) for day, videos in days.items()]
+
+
+def get_days_from_concatenated(concatenated_videos_directory: Path) -> list[Day]:
+    videos = load_videos(concatenated_videos_directory)
+    return [
+        Day(date=date.fromisoformat(video.stem), concatenated_video=video)
+        for video in videos
+    ]
 
 
 def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
     concatenated_videos_directory.mkdir(parents=True, exist_ok=True)
     output_path = concatenated_videos_directory / f"{day.date_string}.mkv"
 
-    videoclips = [VideoFileClip(video) for video in day.videos]
+    videoclips = [VideoFileClip(video) for video in day.source_videos]
 
     try:
         with concatenate_videoclips(videoclips) as final:
-            final.write_videofile(output_path, threads=12)
+            final.write_videofile(output_path)
     finally:
         for clip in videoclips:
             clip.close()

@@ -7,6 +7,7 @@ from hog_uploader.videos import (
     Day,
     concatenate_videos,
     get_days,
+    get_days_from_concatenated,
     load_videos,
     move_file,
 )
@@ -16,7 +17,7 @@ def test_Day():
     test_date = datetime(2026, 8, 23, 12).date()
     test_videos = [Path("test.mp4")]
 
-    actual_day = Day(test_date, test_videos)
+    actual_day = Day(date=test_date, source_videos=test_videos)
 
     assert isinstance(actual_day.date_string, str)
     assert actual_day.date_string == "2026-08-23"
@@ -62,10 +63,29 @@ def test_get_days(mock_stats, tmp_path):
     actual = get_days([video_1, video_2, video_3, video_4])
 
     expected = [
-        Day(date=date(2026, 8, 22), videos=[video_1, video_2, video_4]),
-        Day(date=date(2026, 8, 21), videos=[video_3]),
+        Day(date=date(2026, 8, 22), source_videos=[video_1, video_2, video_4]),
+        Day(date=date(2026, 8, 21), source_videos=[video_3]),
     ]
 
+    assert actual == expected
+
+
+def test_get_days_from_concatenated(tmp_path):
+    # given
+    test_video_1 = tmp_path / "2026-09-09.mkv"
+    test_video_2 = tmp_path / "2026-10-10.mkv"
+
+    test_video_1.touch()
+    test_video_2.touch()
+
+    # when
+    actual = get_days_from_concatenated(tmp_path)
+
+    # then
+    expected = [
+        Day(date=date(2026, 9, 9), concatenated_video=test_video_1),
+        Day(date=date(2026, 10, 10), concatenated_video=test_video_2),
+    ]
     assert actual == expected
 
 
@@ -80,7 +100,7 @@ def test_concatenate_videos(
     video_3 = tmp_path / "video3.mp4"
     test_output_directory = tmp_path / "output"
     test_day = Day(
-        date=datetime(2026, 8, 23).date(), videos=[video_1, video_2, video_3]
+        date=datetime(2026, 8, 23).date(), source_videos=[video_1, video_2, video_3]
     )
 
     mock_final_videoclip = MagicMock()
@@ -109,7 +129,7 @@ def test_concatenate_videos(
     mock_videoclip_3.close.assert_called_once()
 
     mock_final_videoclip.__enter__.assert_called_once()
-    mock_final_videoclip.write_videofile.assert_called_once_with(expected, threads=12)
+    mock_final_videoclip.write_videofile.assert_called_once_with(expected)
     mock_final_videoclip.__exit__.assert_called_once()
 
 
