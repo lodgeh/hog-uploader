@@ -58,8 +58,8 @@ def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
     videoclips = [VideoFileClip(video) for video in day.source_videos]
 
     try:
-        with concatenate_videoclips(videoclips) as final:
-            final.write_videofile(output_path)
+        with concatenate_videoclips(videoclips) as concatenated:
+            concatenated.write_videofile(output_path)
     finally:
         for clip in videoclips:
             clip.close()
