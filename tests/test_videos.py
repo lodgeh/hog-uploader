@@ -3,6 +3,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, call, patch
 
+import pytest
+
 from hog_uploader.videos import (
     Day,
     concatenate_videos,
@@ -131,6 +133,17 @@ def test_concatenate_videos(
     mock_final_videoclip.__enter__.assert_called_once()
     mock_final_videoclip.write_videofile.assert_called_once_with(expected)
     mock_final_videoclip.__exit__.assert_called_once()
+
+
+def test_concatenate_videos_no_source_videos(tmp_path):
+    test_date = date(2026, 9, 9)
+    test_video = tmp_path / "2026-09-09.mkv"
+    test_day = Day(date=test_date, concatenated_video=test_video)
+
+    with pytest.raises(
+        ValueError, match="The day 2026-09-09 has no source videos to concatenate"
+    ):
+        concatenate_videos(day=test_day, concatenated_videos_directory=tmp_path)
 
 
 @patch("hog_uploader.videos.shutil.move")

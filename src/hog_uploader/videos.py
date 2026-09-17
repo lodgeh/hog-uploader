@@ -47,6 +47,11 @@ def get_days_from_concatenated(concatenated_videos_directory: Path) -> list[Day]
 
 
 def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
+    if not day.source_videos:
+        raise ValueError(
+            f"The day {day.date_string} has no source videos to concatenate"
+        )
+
     concatenated_videos_directory.mkdir(parents=True, exist_ok=True)
     output_path = concatenated_videos_directory / f"{day.date_string}.mkv"
 
