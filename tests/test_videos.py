@@ -29,8 +29,8 @@ def test_Day():
 def test_load_videos(tmp_path):
     # given
     test_path = tmp_path / "something"
-    test_file_1 = test_path / "video1.mkv"
-    test_file_2 = test_path / "video2.mkv"
+    test_file_1 = test_path / "video1.mp4"
+    test_file_2 = test_path / "video2.MP4"
     test_file_3 = test_path / "notavideo.csv"
 
     test_path.mkdir()
@@ -74,8 +74,8 @@ def test_get_days(mock_stats, tmp_path):
 
 def test_get_days_from_concatenated(tmp_path):
     # given
-    test_video_1 = tmp_path / "2026-09-09.mkv"
-    test_video_2 = tmp_path / "2026-10-10.mkv"
+    test_video_1 = tmp_path / "2026-09-09.mp4"
+    test_video_2 = tmp_path / "2026-10-10.mp4"
 
     test_video_1.touch()
     test_video_2.touch()
@@ -122,7 +122,7 @@ def test_concatenate_videos(
     actual = concatenate_videos(test_day, test_output_directory)
 
     # then
-    expected = tmp_path / "output" / "2026-08-23.mkv"
+    expected = tmp_path / "output" / "2026-08-23.mp4"
     assert actual == expected
 
     mock_video_file_clip.assert_has_calls([call(video_1), call(video_2), call(video_3)])
@@ -137,7 +137,7 @@ def test_concatenate_videos(
 
 def test_concatenate_videos_no_source_videos(tmp_path):
     test_date = date(2026, 9, 9)
-    test_video = tmp_path / "2026-09-09.mkv"
+    test_video = tmp_path / "2026-09-09.mp4"
     test_day = Day(date=test_date, concatenated_video=test_video)
 
     with pytest.raises(

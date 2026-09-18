@@ -29,6 +29,7 @@ def test_main_upload(mock_hog_uploader):
         input_directory=Path("."),
         output_directory=Path("."),
         upload=True,
+        upload_only=False,
         oauth_client_secrets_file=Path("some-file.json"),
         youtube_playlist_id="some-id",
     )
@@ -47,6 +48,7 @@ def test_main_no_upload(mock_hog_uploader):
         input_directory=Path("."),
         output_directory=Path("."),
         upload=False,
+        upload_only=False,
         oauth_client_secrets_file=None,
         youtube_playlist_id=None,
     )
@@ -65,3 +67,8 @@ def test_main_invalid(capsys):
         "--oauth-client-secrets-file and --youtube-playlist-id are required with --upload"
         in capsys.readouterr().err
     )
+
+
+def test_hog_uploader():
+    # i should probably test this...
+    pass

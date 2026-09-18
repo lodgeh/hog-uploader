@@ -7,7 +7,7 @@ from pathlib import Path
 from moviepy import VideoFileClip, concatenate_videoclips
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Day:
     date: date
     source_videos: list[Path] = field(default_factory=list)
@@ -19,7 +19,7 @@ class Day:
 
 
 def load_videos(path: Path) -> list[Path]:
-    return sorted(file for file in path.iterdir() if file.suffix == ".mkv")
+    return sorted(file for file in path.iterdir() if file.suffix.lower() == ".mp4")
 
 
 def get_days(videos: list[Path]) -> list[Day]:
@@ -46,6 +46,7 @@ def get_days_from_concatenated(concatenated_videos_directory: Path) -> list[Day]
     ]
 
 
+# @time_function
 def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
     if not day.source_videos:
         raise ValueError(
@@ -53,7 +54,7 @@ def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
         )
 
     concatenated_videos_directory.mkdir(parents=True, exist_ok=True)
-    output_path = concatenated_videos_directory / f"{day.date_string}.mkv"
+    output_path = concatenated_videos_directory / f"{day.date_string}.mp4"
 
     videoclips = [VideoFileClip(video) for video in day.source_videos]
 
