@@ -2,6 +2,7 @@ import argparse
 from collections.abc import Sequence
 from pathlib import Path
 
+from hog_uploader.enums import VideoExtension
 from hog_uploader.videos import (
     concatenate_videos,
     get_days,
@@ -25,6 +26,13 @@ def main(argv: Sequence[str] | None = None) -> None:
         "--output-dir",
         type=Path,
         help="Output directory for raw, concatenated and uploaded videos",
+    )
+    parser.add_argument(
+        "--video-extension",
+        type=str,
+        default=VideoExtension.MP4,
+        choices=[extension for extension in VideoExtension],
+        help="Extension of input and ouput video; defaults to .mp4",
     )
     upload_group.add_argument(
         "--upload",
@@ -63,6 +71,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     hog_uploader(
         input_directory=args.input_dir,
         output_directory=args.output_dir,
+        video_extension=args.video_extension,
         upload=args.upload,
         upload_only=args.upload_only,
         oauth_client_secrets_file=args.oauth_client_secrets_file,
@@ -73,6 +82,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 def hog_uploader(
     input_directory: Path,
     output_directory: Path,
+    video_extension: str,
     upload: bool,
     upload_only: bool,
     oauth_client_secrets_file: Path,

@@ -28,6 +28,7 @@ def test_main_upload(mock_hog_uploader):
     mock_hog_uploader.assert_called_once_with(
         input_directory=Path("."),
         output_directory=Path("."),
+        video_extension=".mp4",
         upload=True,
         upload_only=False,
         oauth_client_secrets_file=Path("some-file.json"),
@@ -47,6 +48,7 @@ def test_main_no_upload(mock_hog_uploader):
     mock_hog_uploader.assert_called_once_with(
         input_directory=Path("."),
         output_directory=Path("."),
+        video_extension=".mp4",
         upload=False,
         upload_only=False,
         oauth_client_secrets_file=None,
