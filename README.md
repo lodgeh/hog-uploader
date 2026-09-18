@@ -23,7 +23,7 @@ project for combining video clips into continuous files and uploading to youtube
     
 ## Help
 ```
-usage: hog [-h] [--input-dir INPUT_DIR] [--output-dir OUTPUT_DIR] [--video-extension {.mp4,.mkv}]
+usage: hog [-h] [--input-dir INPUT_DIR] [--output-dir OUTPUT_DIR] [--video-extension {.mp4,.mkv,.mov,.avi}]
            [--upload | --no-upload | --upload-only] [--oauth-client-secrets-file OAUTH_CLIENT_SECRETS_FILE]
            [--youtube-playlist-id YOUTUBE_PLAYLIST_ID]
 
@@ -33,7 +33,7 @@ options:
                         Directory containing input video files
   --output-dir OUTPUT_DIR
                         Output directory for raw, concatenated and uploaded videos
-  --video-extension {.mp4,.mkv}
+  --video-extension {.mp4,.mkv,.mov,.avi}
                         Extension of input and ouput video; defaults to .mp4
   --upload, --no-upload
                         Upload concatenated videos to YouTube; defaults to --upload

@@ -2,12 +2,19 @@ import shutil
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+from enum import StrEnum
 from pathlib import Path
 
 from moviepy import VideoFileClip, concatenate_videoclips
 
 from hog_uploader.decorators import time_function
-from hog_uploader.enums import VideoExtension
+
+
+class VideoExtension(StrEnum):
+    MP4 = ".mp4"
+    MKV = ".mkv"
+    MOV = ".mov"
+    AVI = ".avi"
 
 
 @dataclass(kw_only=True)

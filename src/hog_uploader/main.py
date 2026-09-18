@@ -2,8 +2,8 @@ import argparse
 from collections.abc import Sequence
 from pathlib import Path
 
-from hog_uploader.enums import VideoExtension
 from hog_uploader.videos import (
+    VideoExtension,
     concatenate_videos,
     get_days,
     get_days_from_concatenated,
