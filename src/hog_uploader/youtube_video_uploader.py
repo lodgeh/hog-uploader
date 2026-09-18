@@ -4,11 +4,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import Resource, build
 from googleapiclient.http import MediaFileUpload
 
+from hog_uploader.decorators import time_function
+
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube",
 ]
-PLAYLIST_ID = "PLtZv6jHN_L88JZmqB7yhdxAtm3MEn3CQH"
 
 
 def create_youtube_service(credentials_file_path: Path) -> Resource:
@@ -23,6 +24,7 @@ class YoutubeVideoUploader:
     def __init__(self, service: Resource):
         self.youtube = service
 
+    @time_function
     def upload_video(self, video_title: str, video_file_path: Path) -> str:
         body = {
             "snippet": {"title": video_title},

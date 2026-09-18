@@ -6,6 +6,8 @@ from pathlib import Path
 
 from moviepy import VideoFileClip, concatenate_videoclips
 
+from hog_uploader.decorators import time_function
+
 
 @dataclass(kw_only=True)
 class Day:
@@ -46,7 +48,7 @@ def get_days_from_concatenated(concatenated_videos_directory: Path) -> list[Day]
     ]
 
 
-# @time_function
+@time_function
 def concatenate_videos(day: Day, concatenated_videos_directory: Path) -> Path:
     if not day.source_videos:
         raise ValueError(
