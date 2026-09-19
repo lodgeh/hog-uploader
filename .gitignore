@@ -1,9 +1,11 @@
-settings.json
-youtube_secrets.json
-__pycache__/
+.venv
+__pycache__
+input
+output
 
+client_secret_*.json
+
+*.mkv
 *.mp4
 *.MP4
 *.mp3
-*.ipynb
-
