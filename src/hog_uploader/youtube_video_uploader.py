@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -10,6 +11,10 @@ SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube",
 ]
+
+logger = logging.getLogger(__name__)
+logging.getLogger("google_auth_oauthlib").setLevel(logging.WARNING)
+logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
 
 def create_youtube_service(credentials_file_path: Path) -> Resource:
@@ -37,8 +42,11 @@ class YoutubeVideoUploader:
                 str(video_file_path), chunksize=-1, resumable=True
             ),
         )
+        logger.info("uploading video %s", video_file_path)
         _, response = video_upload_request.next_chunk()
-        return response["id"]
+        video_id = response["id"]
+        logger.info("uploaded video %s with id %s", video_file_path, video_id)
+        return video_id
 
     def add_video_to_playlist(self, playlist_id: str, video_id: str) -> None:
         body = {
@@ -48,6 +56,7 @@ class YoutubeVideoUploader:
             },
         }
         self.youtube.playlistItems().insert(part="snippet", body=body).execute()
+        logger.info("video %s added to playlist %s", video_id, playlist_id)
 
     def upload_video_and_add_to_playlist(
         self, video_title: str, video_file_path: Path, playlist_id: str

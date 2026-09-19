@@ -1,3 +1,4 @@
+import logging
 import shutil
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -8,6 +9,8 @@ from pathlib import Path
 from moviepy import VideoFileClip, concatenate_videoclips
 
 from hog_uploader.decorators import time_function
+
+logger = logging.getLogger(__name__)
 
 
 class VideoExtension(StrEnum):
@@ -70,6 +73,9 @@ def concatenate_videos(
         raise ValueError(
             f"The day {day.date_string} has no source videos to concatenate"
         )
+    logger.info(
+        "concatenating %d videos for %s", len(day.source_videos), day.date_string
+    )
 
     concatenated_videos_directory.mkdir(parents=True, exist_ok=True)
     output_path = concatenated_videos_directory / f"{day.date_string}{video_extension}"
@@ -78,7 +84,8 @@ def concatenate_videos(
 
     try:
         with concatenate_videoclips(videoclips) as concatenated:
-            concatenated.write_videofile(output_path)
+            concatenated.write_videofile(output_path, logger=None)
+            logger.info("concatenated video written to %s", output_path)
     finally:
         for clip in videoclips:
             clip.close()

@@ -13,7 +13,7 @@ def time_function(func: Callable[..., Any]) -> Callable[..., Any]:
         value = func(*args, **kwargs)
         end = perf_counter()
         runtime = end - start
-        print(f"function {func.__name__} ran in {runtime:.2f} seconds")
+        logger.info("function %s ran in %.2f seconds", func.__name__, runtime)
         return value
 
     return wrapper

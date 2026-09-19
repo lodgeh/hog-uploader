@@ -1,4 +1,5 @@
 import argparse
+import logging
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -14,6 +15,8 @@ from hog_uploader.youtube_video_uploader import (
     YoutubeVideoUploader,
     create_youtube_service,
 )
+
+logging.basicConfig(level=logging.INFO)
 
 
 def main(argv: Sequence[str] | None = None) -> None:
